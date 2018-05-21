@@ -1,0 +1,38 @@
+{
+  "name": "tradie-challenge",
+  "version": "0.1.0",
+  "description": "",
+  "main": "app.js",
+  "engines": {
+    "node": "8.11.1"
+  },
+  "scripts": {
+    "start": "node app.js",
+    "test": "mocha */**.spec.js",
+    "dev": "nodemon app.js",
+    "docs": "apidoc -i ./routes -o apidoc/"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "apidoc": "0.17.6",
+    "chai": "4.1.2",
+    "eslint": "4.19.1",
+    "eslint-config-airbnb": "16.1.0",
+    "eslint-config-airbnb-base": "12.1.0",
+    "eslint-plugin-import": "2.12.0",
+    "mocha": "5.2.0",
+    "nodemon": "1.17.4"
+  },
+  "apidoc": {
+    "title": "tradie-challenge API",
+    "version": "0.1.0",
+    "url": "https://localhost:3000/v1/api"
+  },
+  "dependencies": {
+    "bunyan": "1.8.12",
+    "dotenv": "5.0.1",
+    "express": "4.16.3",
+    "mongoose": "5.1.1"
+  }
+}
