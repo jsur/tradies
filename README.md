@@ -3,6 +3,7 @@
 ## Technologies
 
 - Server: Node.js 8.11.1
+- MongoDB 3.4.5
 - Framework: Express 4.16.3
 - Logging: Bunyan 1.8.12
 - ORM: Mongoose 5.1.1
