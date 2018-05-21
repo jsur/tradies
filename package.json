@@ -9,7 +9,7 @@
   "scripts": {
     "start": "node app.js",
     "test": "mocha */**.spec.js",
-    "dev": "nodemon app.js",
+    "dev": "nodemon app.js -i ./apidoc",
     "docs": "apidoc -i ./routes -o apidoc/"
   },
   "author": "",
@@ -27,7 +27,7 @@
   "apidoc": {
     "title": "tradie-challenge API",
     "version": "0.1.0",
-    "url": "https://localhost:3000/v1/api"
+    "url": "https://localhost:4000/v1/api"
   },
   "dependencies": {
     "bunyan": "1.8.12",
