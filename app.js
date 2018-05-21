@@ -20,3 +20,5 @@ const port = app.get('port');
 app.listen(port, () => {
   log.info(`Example app listening on port ${port}!`);
 });
+
+module.exports = app;
