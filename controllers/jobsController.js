@@ -1,7 +1,6 @@
 const Job = require('../models/Job');
 
-const { getServerErrors } = require('../helpers/errorHandlers'); 
-const { log } = require('../helpers/logger');
+const { getServerErrors, handleServerErrors } = require('../helpers/errorHandlers'); 
 
 exports.addJob = async (req, res) => {
   try {
@@ -9,11 +8,16 @@ exports.addJob = async (req, res) => {
     res.status(200).send(newJob);
   } catch (err) {
     const errors = getServerErrors(err);
-    if (errors.ValidatorError) {
-      res.status(400).send(errors);
-      return;
-    }
-    log.info(err);
-    res.sendStatus(500);
+    handleServerErrors(err, errors, res);
+  }
+};
+
+exports.getJobs = async (req, res) => {
+  try {
+    const jobs = await Job.find();
+    res.status(200).send(jobs);
+  } catch (err) {
+    const errors = getServerErrors(err);
+    handleServerErrors(err, errors, res);
   }
 };

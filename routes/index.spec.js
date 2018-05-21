@@ -24,7 +24,6 @@ describe('GET /ping', () => {
 });
 
 describe('POST /job', () => {
-
   beforeEach(async () => {
     await Job.remove({});
   });
@@ -46,6 +45,21 @@ describe('POST /job', () => {
       .end((err, res) => {
         expect(res.status).to.equal(200);
         expect(res.body.status).to.equal('new');
+        expect(res.body.customerName).to.equal('Testi Testinen');
+        done();
+      });
+  });
+});
+
+describe('GET /jobs', () => {
+
+  it('Should return an array of jobs', (done) => {
+    chai.request(app)
+      .get(`${baseUrl}/jobs`)
+      .set('app_id', 'maybe-jwt-is-better')
+      .end((err, res) => {
+        expect(res.status).to.equal(200);
+        expect(res.body).to.be.an('array');
         done();
       });
   });

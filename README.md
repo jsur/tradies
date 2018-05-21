@@ -18,3 +18,7 @@
 1. Get `.env` file from project creator
 2. `npm install`
 3. `npm start`
+
+## Apidocs
+
+Run `npm run docs` and open apidoc/index.html
