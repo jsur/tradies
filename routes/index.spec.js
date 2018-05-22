@@ -51,8 +51,7 @@ describe('POST /job', () => {
   });
 });
 
-describe('GET /jobs', () => {
-
+describe('GET /jobs/:id', () => {
   it('Should return an array of jobs', (done) => {
     chai.request(app)
       .get(`${baseUrl}/jobs`)

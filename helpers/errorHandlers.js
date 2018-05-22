@@ -1,6 +1,6 @@
 const { log } = require('../helpers/logger');
 
-exports.getServerErrors = (errObj) => {
+const getServerErrors = (errObj) => {
   if (errObj && errObj.errors) {
     const { errors } = errObj;
     const retObj = {};
@@ -19,11 +19,16 @@ exports.getServerErrors = (errObj) => {
   return undefined;
 };
 
-exports.handleServerErrors = (err, errors, res) => {
-  if (errors.ValidatorError) {
+const sendServerErrors = (err, errors, res) => {
+  if (errors && (errors.ValidatorError || errors.MongoError)) {
     res.status(400).send(errors);
     return;
   }
   log.info(err);
   res.sendStatus(500);
+};
+
+exports.handleServerErrors = (err, res) => {
+  const errors = getServerErrors(err);
+  sendServerErrors(err, errors, res);
 };

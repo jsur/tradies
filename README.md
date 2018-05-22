@@ -19,6 +19,8 @@
 2. `npm install`
 3. `npm start`
 
+2 jobs and 2 tradies will be seeded to the db on each restart to help in trying the API.
+
 ## Apidocs
 
 Run `npm run docs` and open apidoc/index.html
