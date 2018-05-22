@@ -27,7 +27,11 @@ exports.getJobs = async (req, res) => {
 exports.getJob = async (req, res) => {
   try {
     const job = await Job.findById(req.params.id);
-    res.status(200).send(job);
+    if (job) {
+      res.status(200).send(job);
+      return;
+    }
+    res.status(400).send('No job found with given id');
   } catch (err) {
     handleServerErrors(err, res);
   }
