@@ -130,6 +130,24 @@ router.get(`${base}${apiV1}/job/:id`, authController.checkAuth, jobController.ge
  */
 router.get(`${base}${apiV1}/jobs`, authController.checkAuth, jobController.getJobs);
 
+/**
+ * @api {post} /job/assignTradie Assign a tradie to a job
+ * @apiName tradie-challenge
+ * @apiGroup Jobs
+ *
+ * @apiParamExample {json} Example request:
+ *  {
+ *    "jobId": "5b06ac7e8b68482f8df01e30",
+ *    "tradieId": "5b06ac7e8b68482f8df01e31",
+ *  }
+ *
+ * @apiSuccess {String} Text Tradie assigned to job 5b06ac7e8b68482f8df01e30!
+ *
+ * @apiError {String} Error Error text
+ * @apiErrorExample {json} Example error:
+ * "You have to give a valid jobId and tradieId."
+ */
+
 router.post(`${base}${apiV1}/job/assignTradie`, authController.checkAuth, jobController.assignTradie);
 
 module.exports = router;
