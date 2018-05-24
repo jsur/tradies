@@ -3,9 +3,13 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const app = require('../app');
+const mongoose = require('mongoose');
 
 const { expect } = chai;
 const Job = require('../models/Job');
+const Tradie = require('../models/Tradie');
+
+const isIdValid = id => mongoose.Types.ObjectId.isValid(id);
 
 chai.use(chaiHttp);
 
@@ -51,7 +55,7 @@ describe('POST /job', () => {
   });
 });
 
-describe('GET /jobs/:id', () => {
+describe('GET /jobs', () => {
   it('Should return an array of jobs', (done) => {
     chai.request(app)
       .get(`${baseUrl}/jobs`)
@@ -59,6 +63,95 @@ describe('GET /jobs/:id', () => {
       .end((err, res) => {
         expect(res.status).to.equal(200);
         expect(res.body).to.be.an('array');
+        done();
+      });
+  });
+});
+
+describe('GET /job/:id', () => {
+
+  let job;
+  let jobId;
+
+  beforeEach(async () => {
+    job = await Job.findOne();
+    jobId = job._id.toString();
+  });
+
+  it('Should return a job with given id', (done) => {
+    chai.request(app)
+      .get(`${baseUrl}/job/${jobId}`)
+      .set('app_id', 'maybe-jwt-is-better')
+      .end((err, res) => {
+        expect(res.status).to.equal(200);
+        expect(isIdValid(res.body._id)).to.equal(true);
+        done();
+      });
+  });
+});
+
+describe('POST /job/assignTradie', () => {
+
+  let job;
+  let jobId;
+  let tradie;
+  let tradieId;
+
+  beforeEach(async () => {
+    job = await Job.findOne();
+    jobId = job._id.toString();
+    tradie = await Tradie.findOne();
+    tradieId = tradie._id.toString();
+  });
+
+
+  it('Should assign a tradie to a job', (done) => {
+    chai.request(app)
+      .post(`${baseUrl}/job/assignTradie`)
+      .set('app_id', 'maybe-jwt-is-better')
+      .send({ jobId, tradieId })
+      .end((err, res) => {
+        expect(res.status).to.equal(200);
+        expect(res.text).to.equal(`Tradie assigned to job ${jobId}!`);
+        done();
+      });
+  });
+  it('Should not allow assigning a tradie to a job more than once', (done) => {
+    chai.request(app)
+      .post(`${baseUrl}/job/assignTradie`)
+      .set('app_id', 'maybe-jwt-is-better')
+      .send({ jobId, tradieId })
+      .end((err, res) => {
+        expect(res.status).to.equal(400);
+        expect(res.text).to.equal('Given tradieId is already assigned to this jobId.');
+        done();
+      });
+  });
+  it('Should complain about nonvalid Mongo ObjectIds', (done) => {
+    chai.request(app)
+      .post(`${baseUrl}/job/assignTradie`)
+      .set('app_id', 'maybe-jwt-is-better')
+      .send({
+        jobId: 'aaaa',
+        tradieId: 'bbbb'
+      })
+      .end((err, res) => {
+        expect(res.status).to.equal(400);
+        expect(res.text).to.equal('You have to give a valid jobId and tradieId.');
+        done();
+      });
+  });
+  it('Should complain about nonexisting jobIds or tradieIds', (done) => {
+    chai.request(app)
+      .post(`${baseUrl}/job/assignTradie`)
+      .set('app_id', 'maybe-jwt-is-better')
+      .send({
+        jobId: '5b06ac7e8b68482f8df01e30',
+        tradieId: '5b06ac7e8b68482f8df01e31'
+      })
+      .end((err, res) => {
+        expect(res.status).to.equal(400);
+        expect(res.text).to.equal('Given jobId or tradieId does not exist.');
         done();
       });
   });
