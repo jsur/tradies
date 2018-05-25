@@ -4,6 +4,8 @@ The app exposes a small API to create and view jobs, and to mark existing tradie
 
 The endpoint details can be viewed from the API documentation, see part "API documentation" to generate the docs.
 
+All routes except for /ping are protected with a middleware in `authController.js`, see the file for the header needed to make requests.
+
 ## Technologies
 
 - Server: Node.js 8.11.1
