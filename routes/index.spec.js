@@ -159,7 +159,7 @@ describe('POST /job/assignTradie', () => {
   });
 });
 
-describe('POST /job/:id/assignments', () => {
+describe('GET /job/:id/assignments', () => {
   let job;
   let jobId;
 
