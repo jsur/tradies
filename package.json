@@ -33,7 +33,7 @@
     "title": "tradie-challenge API",
     "version": "0.1.0",
     "defaultVersion": "0.1.0",
-    "url": "https://localhost:4000/v1/api"
+    "url": "https://localhost:4000/api/v1"
   },
   "dependencies": {
     "body-parser": "1.18.3",

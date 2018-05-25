@@ -25,10 +25,9 @@ Apidoc was used to generate a documentation for API consumers, which can be easi
 
 ## Installing / running the app
 
-1. Get `.env` file from project creator
-2. Run mongodb on your machine
-3. `npm install`
-4. `npm start`
+1. Run mongodb on your machine
+2. `npm install`
+3. `npm start`
 
 2 jobs and 2 tradies will be seeded to the db on each restart to help in trying out the API.
 
