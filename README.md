@@ -21,6 +21,8 @@
 
 2 jobs and 2 tradies will be seeded to the db on each restart to help in trying the API.
 
-## Apidocs
+## API documentation
 
-Run `npm run docs` and open apidoc/index.html
+1. Run `npm run docs`
+2. open apidoc/index.html
+3. Choose `show up to version 0.1.0` from top right corner

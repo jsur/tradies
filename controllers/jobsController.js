@@ -4,6 +4,12 @@ const Tradie = require('../models/Tradie');
 
 const { handleServerErrors } = require('../helpers/errorHandlers');
 
+const {
+  ID_NOTVALID,
+  JOB_NOT_FOUND,
+  ID_JOB_TRADIE_NOTFOUND 
+} = require('../helpers/msg-constants');
+
 const isIdValid = id => mongoose.Types.ObjectId.isValid(id);
 
 exports.addJob = async (req, res) => {
@@ -25,15 +31,20 @@ exports.getJobs = async (req, res) => {
 };
 
 exports.getJob = async (req, res) => {
-  try {
-    const job = await Job.findById(req.params.id);
-    if (job) {
-      res.status(200).send(job);
-      return;
+  const { id } = req.params;
+  if (isIdValid(id)) {
+    try {
+      const job = await Job.findById(id);
+      if (job) {
+        res.status(200).send(job);
+        return;
+      }
+      res.status(400).send(JOB_NOT_FOUND);
+    } catch (err) {
+      handleServerErrors(err, res);
     }
-    res.status(400).send('No job found with given id');
-  } catch (err) {
-    handleServerErrors(err, res);
+  } else {
+    res.status(400).send(ID_NOTVALID);
   }
 };
 
@@ -49,7 +60,7 @@ exports.assignTradie = async (req, res) => {
       const tradie = await Tradie.findById(tradieId);
 
       if (!job || !tradie) {
-        res.status(400).send('Given jobId or tradieId does not exist.');
+        res.status(400).send(ID_JOB_TRADIE_NOTFOUND);
         return;
       }
 
@@ -81,6 +92,29 @@ exports.assignTradie = async (req, res) => {
       handleServerErrors(err, res);
     }
   } else {
-    res.status(400).send('You have to give a valid jobId and tradieId.');
+    res.status(400).send(ID_NOTVALID);
+  }
+};
+
+exports.getJobAssignments = async (req, res) => {
+  const { id } = req.params;
+  if (isIdValid(id)) {
+    try {
+      const assignments = await Job.findOne({ _id: id }, { _id: 0, assignedTradies: 1 });
+      if (assignments) {
+        const tradies = await Tradie.find({
+          _id: {
+            $in: assignments.assignedTradies
+          }
+        });
+        res.status(200).send(tradies);
+        return;
+      }
+      res.status(400).send(JOB_NOT_FOUND);
+    } catch (err) {
+      handleServerErrors(err);
+    }
+  } else {
+    res.status(400).send(ID_NOTVALID);
   }
 };

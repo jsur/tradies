@@ -8,10 +8,13 @@ const apiV1 = '/v1';
 
 /**
  * @api {get} /ping Ping server
+ * @apiVersion 0.1.0
  * @apiName tradie-challenge
  * @apiGroup Helpers
  *
  * @apiSuccess {String} pong pong!
+ * @apiSuccessExample {String} Example success:
+ * pong!
  */
 router.get(`${base}${apiV1}/ping`, (req, res) => {
   res.send('pong!');
@@ -19,6 +22,7 @@ router.get(`${base}${apiV1}/ping`, (req, res) => {
 
 /**
  * @api {post} /job Create new job
+ * @apiVersion 0.1.0
  * @apiName tradie-challenge
  * @apiGroup Jobs
  *
@@ -61,12 +65,54 @@ router.get(`${base}${apiV1}/ping`, (req, res) => {
 router.post(`${base}${apiV1}/job`, authController.checkAuth, jobController.addJob);
 
 /**
+ * @api {get} /job/:id/assignments Get tradies assigned to a job id
+ * @apiVersion 0.1.0
+ * @apiName tradie-challenge
+ * @apiGroup Jobs
+ *
+ * @apiSuccess {Array} Tradies Tradies assigned to a job
+ * @apiSuccessExample {Array} Example success:
+[
+    {
+        "jobsAssigned": [
+            "5b07bffb8d37ec4034a7b35a"
+        ],
+        "jobsHired": [],
+        "_id": "5b07bffb8d37ec4034a7b35c",
+        "name": "Tradie Number 1",
+        "email": "tradie@johndoe.com",
+        "mobile": "123123123",
+        "__v": 0,
+        "created_at": "2018-05-25T07:49:15.307Z",
+        "updated_at": "2018-05-25T07:51:09.941Z"
+    },
+    {
+        "jobsAssigned": [
+            "5b07bffb8d37ec4034a7b35a"
+        ],
+        "jobsHired": [],
+        "_id": "5b07bffb8d37ec4034a7b35d",
+        "name": "John Tradie",
+        "email": "hello@hotmail.com",
+        "mobile": "777 888 999",
+        "__v": 0,
+        "created_at": "2018-05-25T07:49:15.307Z",
+        "updated_at": "2018-05-25T07:51:42.341Z"
+    }
+]
+ *
+ * @apiError {Object} Error Error object
+ */
+router.get(`${base}${apiV1}/job/:id/assignments`, authController.checkAuth, jobController.getJobAssignments);
+
+/**
  * @api {get} /job/:id Get one job by Mongo id
+ * @apiVersion 0.1.0
  * @apiName tradie-challenge
  * @apiGroup Jobs
  *
  * @apiSuccess {Array} Job Retrieved job by id
- * @apiSuccessExample {json} Example success:
+ * @apiSuccessExample {Array} Example success:
  * [
  *  {
  *   "status": "new",
@@ -90,6 +136,7 @@ router.get(`${base}${apiV1}/job/:id`, authController.checkAuth, jobController.ge
 
 /**
  * @api {get} /jobs Get all jobs
+ * @apiVersion 0.1.0
  * @apiName tradie-challenge
  * @apiGroup Jobs
  *
@@ -132,6 +179,7 @@ router.get(`${base}${apiV1}/jobs`, authController.checkAuth, jobController.getJo
 
 /**
  * @api {post} /job/assignTradie Assign a tradie to a job
+ * @apiVersion 0.1.0
  * @apiName tradie-challenge
  * @apiGroup Jobs
  *
@@ -144,10 +192,9 @@ router.get(`${base}${apiV1}/jobs`, authController.checkAuth, jobController.getJo
  * @apiSuccess {String} Text Tradie assigned to job 5b06ac7e8b68482f8df01e30!
  *
  * @apiError {String} Error Error text
- * @apiErrorExample {json} Example error:
+ * @apiErrorExample {String} Example error:
  * "You have to give a valid jobId and tradieId."
  */
-
 router.post(`${base}${apiV1}/job/assignTradie`, authController.checkAuth, jobController.assignTradie);
 
 module.exports = router;

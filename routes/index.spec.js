@@ -10,6 +10,10 @@ const Job = require('../models/Job');
 const Tradie = require('../models/Tradie');
 
 const isIdValid = id => mongoose.Types.ObjectId.isValid(id);
+const {
+  ID_NOTVALID,
+  ID_JOB_TRADIE_NOTFOUND
+} = require('../helpers/msg-constants');
 
 chai.use(chaiHttp);
 
@@ -69,7 +73,6 @@ describe('GET /jobs', () => {
 });
 
 describe('GET /job/:id', () => {
-
   let job;
   let jobId;
 
@@ -91,7 +94,6 @@ describe('GET /job/:id', () => {
 });
 
 describe('POST /job/assignTradie', () => {
-
   let job;
   let jobId;
   let tradie;
@@ -103,7 +105,6 @@ describe('POST /job/assignTradie', () => {
     tradie = await Tradie.findOne();
     tradieId = tradie._id.toString();
   });
-
 
   it('Should assign a tradie to a job', (done) => {
     chai.request(app)
@@ -137,7 +138,7 @@ describe('POST /job/assignTradie', () => {
       })
       .end((err, res) => {
         expect(res.status).to.equal(400);
-        expect(res.text).to.equal('You have to give a valid jobId and tradieId.');
+        expect(res.text).to.equal(ID_NOTVALID);
         done();
       });
   });
@@ -151,8 +152,45 @@ describe('POST /job/assignTradie', () => {
       })
       .end((err, res) => {
         expect(res.status).to.equal(400);
-        expect(res.text).to.equal('Given jobId or tradieId does not exist.');
+        expect(res.text).to.equal(ID_JOB_TRADIE_NOTFOUND);
         done();
       });
   });
+});
+
+describe('POST /job/:id/assignments', () => {
+  let job;
+  let jobId;
+
+  beforeEach(async () => {
+    job = await Job.findOne();
+    jobId = job._id.toString();
+  });
+
+  it('Should return tradies assigned to a jobId', (done) => {
+    chai.request(app)
+      .get(`${baseUrl}/job/${jobId}/assignments`)
+      .set('app_id', 'maybe-jwt-is-better')
+      .end((err, res) => {
+        expect(res.status).to.equal(200);
+        expect(res.body).to.be.an('array');
+        expect(isIdValid(res.body[0]._id)).to.equal(true);
+        done();
+      });
+  });
+  it('Should complain about a nonvalid jobId', (done) => {
+    chai.request(app)
+      .get(`${baseUrl}/job/asdfasdf/assignments`)
+      .set('app_id', 'maybe-jwt-is-better')
+      .end((err, res) => {
+        expect(res.status).to.equal(400);
+        expect(res.text).to.equal(ID_NOTVALID);
+        done();
+      });
+  });
+});
+
+after(async () => {
+  await Job.remove();
+  await Tradie.remove();
 });
