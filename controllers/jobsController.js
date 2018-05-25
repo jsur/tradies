@@ -80,15 +80,6 @@ exports.assignTradie = async (req, res) => {
         }
       );
 
-      const tradiesAssignedJobs = tradie.jobsAssigned.map(item => item.toString());
-
-      if (tradie && !tradiesAssignedJobs.includes(jobId)) {
-        await Tradie.findByIdAndUpdate(
-          tradieId,
-          { $push: { jobsAssigned: jobId } }
-        );
-      }
-
       res.status(200).send(`Tradie assigned to job ${updatedJob._id}!`);
     } catch (err) {
       handleServerErrors(err, res);

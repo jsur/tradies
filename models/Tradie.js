@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
 
-const { Schema } = mongoose;
-
 const tradieSchema = new mongoose.Schema(
   {
     name: {
@@ -15,14 +13,6 @@ const tradieSchema = new mongoose.Schema(
     mobile: {
       type: String,
       required: [true, 'Mobile is required']
-    },
-    jobsAssigned: {
-      type: [Schema.Types.ObjectId],
-      ref: 'Job'
-    },
-    jobsHired: {
-      type: [Schema.Types.ObjectId],
-      ref: 'Job'
     }
   },
   {
