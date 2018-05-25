@@ -39,11 +39,13 @@ const jobSchema = new mongoose.Schema(
     },
     assignedTradies: {
       type: [Schema.Types.ObjectId],
-      ref: 'Tradie'
+      ref: 'Tradie',
+      default: []
     },
     hiredTradie: {
       type: Schema.Types.ObjectId,
-      ref: 'Tradie'
+      ref: 'Tradie',
+      default: null
     }
   },
   {

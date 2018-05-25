@@ -141,7 +141,7 @@ router.get(`${base}${apiV1}/job/:id`, authController.checkAuth, jobController.ge
  * @apiGroup Jobs
  *
  * @apiSuccess {Array} Jobs All job objects
- * @apiSuccessExample {json} Example success:
+ * @apiSuccessExample {Array} Example success:
  * [
  *  {
  *   "status": "new",
@@ -196,5 +196,25 @@ router.get(`${base}${apiV1}/jobs`, authController.checkAuth, jobController.getJo
  * "You have to give a valid jobId and tradieId."
  */
 router.post(`${base}${apiV1}/job/assignTradie`, authController.checkAuth, jobController.assignTradie);
+
+/**
+ * @api {post} /job/hireTradie Hire a tradie for a job
+ * @apiVersion 0.1.0
+ * @apiName tradie-challenge
+ * @apiGroup Jobs
+ *
+ * @apiParamExample {json} Example request:
+ *  {
+ *    "jobId": "5b06ac7e8b68482f8df01e30",
+ *    "tradieId": "5b06ac7e8b68482f8df01e31",
+ *  }
+ *
+ * @apiSuccess {String} Text Tradie 5b06ac7e8b68482f8df01e31 hired to job!
+ *
+ * @apiError {String} Error Error text
+ * @apiErrorExample {String} Example error:
+ * "Job already has a tradie hired."
+ */
+router.post(`${base}${apiV1}/job/hireTradie`, authController.checkAuth, jobController.hireTradie);
 
 module.exports = router;

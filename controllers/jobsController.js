@@ -7,7 +7,9 @@ const { handleServerErrors } = require('../helpers/errorHandlers');
 const {
   ID_NOTVALID,
   JOB_NOT_FOUND,
-  ID_JOB_TRADIE_NOTFOUND 
+  ID_JOB_TRADIE_NOTFOUND,
+  JOB_ALREADY_HIRED,
+  JOB_ALREADY_ASSIGNED
 } = require('../helpers/msg-constants');
 
 const isIdValid = id => mongoose.Types.ObjectId.isValid(id);
@@ -67,7 +69,7 @@ exports.assignTradie = async (req, res) => {
       const assignedTradies = job.assignedTradies.map(item => item.toString());
 
       if (assignedTradies.includes(tradieId)) {
-        res.status(400).send('Given tradieId is already assigned to this jobId.');
+        res.status(400).send(JOB_ALREADY_ASSIGNED);
         return;
       }
       const updatedJob = await Job.findByIdAndUpdate(
@@ -117,4 +119,46 @@ exports.getJobAssignments = async (req, res) => {
   } else {
     res.status(400).send(ID_NOTVALID);
   }
+};
+
+exports.hireTradie = async (req, res) => {
+  const { jobId, tradieId } = req.body;
+
+  if (
+    jobId &&
+    tradieId &&
+    (isIdValid(jobId) && isIdValid(tradieId))
+  ) {
+    try {
+      const job = await Job.findById(jobId);
+      const tradie = await Tradie.findById(tradieId);
+
+      if (!job || !tradie) {
+        res.status(400).send(ID_JOB_TRADIE_NOTFOUND);
+        return;
+      }
+
+      if (
+        job &&
+        job.status !== 'hired' &&
+        !job.hiredTradie) {
+        await Job.findByIdAndUpdate(
+          jobId,
+          {
+            hiredTradie: tradieId,
+            status: 'hired'
+          }
+        );
+        res.status(200).send(`Tradie ${tradieId} hired to job!`);
+      } else {
+        res.status(400).send(JOB_ALREADY_HIRED);
+        return;
+      }
+    } catch (err) {
+      handleServerErrors(err);
+    }
+  } else {
+    res.status(400).send(ID_NOTVALID);
+  }
+
 };

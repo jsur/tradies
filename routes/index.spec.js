@@ -12,7 +12,8 @@ const Tradie = require('../models/Tradie');
 const isIdValid = id => mongoose.Types.ObjectId.isValid(id);
 const {
   ID_NOTVALID,
-  ID_JOB_TRADIE_NOTFOUND
+  ID_JOB_TRADIE_NOTFOUND,
+  JOB_ALREADY_HIRED
 } = require('../helpers/msg-constants');
 
 chai.use(chaiHttp);
@@ -185,6 +186,71 @@ describe('POST /job/:id/assignments', () => {
       .end((err, res) => {
         expect(res.status).to.equal(400);
         expect(res.text).to.equal(ID_NOTVALID);
+        done();
+      });
+  });
+});
+
+describe('POST /job/hireTradie', () => {
+  let job;
+  let jobId;
+  let tradie;
+  let tradieId;
+
+  beforeEach(async () => {
+    job = await Job.findOne();
+    jobId = job._id.toString();
+    tradie = await Tradie.findOne();
+    tradieId = tradie._id.toString();
+  });
+
+  it('Should mark a tradie as hired for a job', (done) => {
+    chai.request(app)
+      .post(`${baseUrl}/job/hireTradie`)
+      .set('app_id', 'maybe-jwt-is-better')
+      .send({ jobId, tradieId })
+      .end((err, res) => {
+        expect(res.status).to.equal(200);
+        expect(res.text).to.equal(`Tradie ${tradieId} hired to job!`);
+        done();
+      });
+  });
+  it('Should not allow changing the hired tradie', (done) => {
+    chai.request(app)
+      .post(`${baseUrl}/job/hireTradie`)
+      .set('app_id', 'maybe-jwt-is-better')
+      .send({ jobId, tradieId })
+      .end((err, res) => {
+        expect(res.status).to.equal(400);
+        expect(res.text).to.equal(JOB_ALREADY_HIRED);
+        done();
+      });
+  });
+  it('Should complain about invalid ids', (done) => {
+    chai.request(app)
+      .post(`${baseUrl}/job/hireTradie`)
+      .set('app_id', 'maybe-jwt-is-better')
+      .send({
+        jobId: 'aaaa',
+        tradieId: 'bbbb'
+      })
+      .end((err, res) => {
+        expect(res.status).to.equal(400);
+        expect(res.text).to.equal(ID_NOTVALID);
+        done();
+      });
+  });
+  it('Should complain about nonexisting ids', (done) => {
+    chai.request(app)
+      .post(`${baseUrl}/job/hireTradie`)
+      .set('app_id', 'maybe-jwt-is-better')
+      .send({
+        jobId: '5b07bffb8d37ec4034a7b35a',
+        tradieId: '5b07bffb8d37ec4034a7b35b'
+      })
+      .end((err, res) => {
+        expect(res.status).to.equal(400);
+        expect(res.text).to.equal(ID_JOB_TRADIE_NOTFOUND);
         done();
       });
   });
